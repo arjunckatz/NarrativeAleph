@@ -6,16 +6,16 @@ This project is not a trading bot, stock price predictor, or generic finance das
 
 ## Phase Scope
 
-Phases 0 and 1 establish only the repo, API shell, local database, ORM models, migrations, and tests.
+Phases 0 and 1 establish the repo, API shell, local database, ORM models, migrations, and tests. Phase 2 adds local JSON document ingestion and deterministic chunking only.
 
 Out of scope for these phases:
 
-- ingestion
 - search
 - embeddings
 - event extraction
 - narrative ranking
 - frontend product workflows
+- real news, filing, transcript, or market data APIs
 
 ## Local Setup
 
@@ -84,6 +84,27 @@ Endpoints:
 
 - `GET /health`
 - `GET /api/version`
+
+## Local Document Ingestion
+
+Phase 2 supports local JSON ingestion only. It does not call real news, filing, transcript, market data, or embedding APIs.
+
+Run the sample ingestion after Postgres is running and migrations have been applied:
+
+```bash
+make ingest-sample
+```
+
+Equivalent direct command:
+
+```bash
+cd backend
+python -m app.ingestion.cli ../data/sample_documents.json
+```
+
+The ingestion command validates the full file before writing anything. Missing required fields, invalid `source_type`, invalid `published_at`, or empty `raw_text` stop the run without partial ingestion.
+
+The local sample file lives at `data/sample_documents.json` and contains clearly synthetic finance documents around NVDA export restrictions, AI datacenter demand, margin pressure, semiconductor selloff, cloud capex, TSLA delivery misses, and AAPL China demand.
 
 ## Frontend
 

@@ -1,0 +1,212 @@
+[
+  {
+    "source_type": "synthetic",
+    "ticker": "NVDA",
+    "title": "Synthetic Brief: Nvidia Export Controls Weigh On China Revenue Assumptions",
+    "published_at": "2026-05-01T13:30:00Z",
+    "source_name": "Synthetic Markets Daily",
+    "url": null,
+    "raw_text": "Nvidia shares traded lower after investors reassessed the revenue impact of expanded export restrictions on advanced accelerators shipped to China. Portfolio managers focused on whether demand from United States hyperscalers could offset slower sales into restricted geographies. The synthetic report noted that management commentary around compliant chips would matter more than headline demand because margins could differ by product mix. Analysts described the issue as a narrative battle between near term regulatory friction and durable AI infrastructure demand.",
+    "metadata": {"synthetic": true, "topic": "NVDA export restrictions", "region": "China"}
+  },
+  {
+    "source_type": "synthetic",
+    "ticker": "NVDA",
+    "title": "Synthetic Analyst Note: Export License Uncertainty Adds To Nvidia Volatility",
+    "published_at": "2026-05-03T14:00:00Z",
+    "source_name": "Synthetic Analyst Desk",
+    "url": null,
+    "raw_text": "A synthetic analyst note framed Nvidia volatility as a function of export license uncertainty rather than a breakdown in AI demand. The note argued that investors were discounting a wider range of outcomes for China-related revenue, including delayed shipments, lower configured products, and customer substitution. It also highlighted that datacenter backlog remained firm. The central question was whether regulatory limits would compress growth expectations faster than hyperscaler orders could expand.",
+    "metadata": {"synthetic": true, "topic": "NVDA export restrictions", "document_kind": "analyst_note"}
+  },
+  {
+    "source_type": "synthetic",
+    "ticker": "NVDA",
+    "title": "Synthetic Transcript Excerpt: Management Asked About Restricted Accelerator Demand",
+    "published_at": "2026-05-06T20:15:00Z",
+    "source_name": "Synthetic Transcript Wire",
+    "url": null,
+    "raw_text": "In a synthetic transcript excerpt, Nvidia management was asked whether export restrictions were changing customer behavior. The response emphasized compliant product development, broad demand for AI training and inference, and supply allocation discipline. Investors focused on the absence of precise regional guidance. The market narrative remained split between confidence in datacenter demand and concern that restricted markets could pressure revenue quality.",
+    "metadata": {"synthetic": true, "topic": "NVDA export restrictions", "format": "transcript_excerpt"}
+  },
+  {
+    "source_type": "synthetic",
+    "ticker": "NVDA",
+    "title": "Synthetic News: AI Datacenter Demand Keeps Nvidia Narrative Intact",
+    "published_at": "2026-05-08T13:45:00Z",
+    "source_name": "Synthetic Tech Tape",
+    "url": null,
+    "raw_text": "Nvidia recovered after synthetic channel checks suggested AI datacenter demand remained robust across large cloud customers. Buyers reportedly continued to prioritize accelerator capacity for model training, inference serving, and internal productivity systems. The report said lead times were still extended, though investors debated whether supply constraints were easing. The bullish narrative centered on persistent cloud capex and a multi-year infrastructure upgrade cycle.",
+    "metadata": {"synthetic": true, "topic": "AI datacenter demand"}
+  },
+  {
+    "source_type": "synthetic",
+    "ticker": "NVDA",
+    "title": "Synthetic Brief: Datacenter Orders Offset Concern Over Gaming Mix",
+    "published_at": "2026-05-10T15:00:00Z",
+    "source_name": "Synthetic Markets Daily",
+    "url": null,
+    "raw_text": "A synthetic market brief said Nvidia sentiment improved as datacenter orders dominated investor discussions. Gaming and workstation exposure were treated as secondary to accelerator shipments and networking attach rates. Some investors worried that a richer mix of lower margin compliant chips could affect gross margin, but the dominant narrative remained AI capacity scarcity. The stock reaction was tied to whether demand signals looked broad enough to absorb regulatory noise.",
+    "metadata": {"synthetic": true, "topic": "AI datacenter demand"}
+  },
+  {
+    "source_type": "synthetic",
+    "ticker": "MSFT",
+    "title": "Synthetic Cloud Note: AI Datacenter Buildout Supports Microsoft Capex Plans",
+    "published_at": "2026-05-11T13:30:00Z",
+    "source_name": "Synthetic Cloud Ledger",
+    "url": null,
+    "raw_text": "Microsoft was described as maintaining aggressive AI datacenter expansion plans in a synthetic cloud note. The note said investors were less focused on near term depreciation and more focused on whether cloud demand could monetize the installed GPU base. Concerns remained around the timing gap between capital spending and revenue contribution. The narrative linked cloud capex directly to demand for AI infrastructure suppliers.",
+    "metadata": {"synthetic": true, "topic": "cloud capex", "ticker_group": "hyperscaler"}
+  },
+  {
+    "source_type": "synthetic",
+    "ticker": "MSFT",
+    "title": "Synthetic News: Azure AI Capacity Commentary Drives Supplier Readthrough",
+    "published_at": "2026-05-13T14:20:00Z",
+    "source_name": "Synthetic Cloud Ledger",
+    "url": null,
+    "raw_text": "A synthetic report said Microsoft commentary on Azure AI capacity created a positive readthrough for semiconductor suppliers. Investors interpreted capacity constraints as evidence that enterprise AI demand was still exceeding available infrastructure. The report also noted pushback that cloud margins could face depreciation pressure. The resulting narrative balanced higher capex visibility against questions about return on invested capital.",
+    "metadata": {"synthetic": true, "topic": "AI datacenter demand"}
+  },
+  {
+    "source_type": "synthetic",
+    "ticker": "AMZN",
+    "title": "Synthetic Brief: AWS Capex Outlook Rekindles AI Infrastructure Debate",
+    "published_at": "2026-05-15T13:30:00Z",
+    "source_name": "Synthetic Cloud Ledger",
+    "url": null,
+    "raw_text": "Amazon shares were mixed in a synthetic brief after investors debated whether AWS capex growth signaled confidence or margin risk. Bulls argued that AI workloads required a larger datacenter footprint and would deepen customer lock-in. Bears focused on free cash flow timing and the possibility of underutilized capacity. Semiconductor names moved with the bullish interpretation that hyperscaler spending remained durable.",
+    "metadata": {"synthetic": true, "topic": "cloud capex"}
+  },
+  {
+    "source_type": "synthetic",
+    "ticker": "GOOGL",
+    "title": "Synthetic Analyst Note: Alphabet Capex Raises Margin Pressure Questions",
+    "published_at": "2026-05-16T16:00:00Z",
+    "source_name": "Synthetic Analyst Desk",
+    "url": null,
+    "raw_text": "A synthetic analyst note said Alphabet faced renewed questions about margin pressure as AI infrastructure spending accelerated. The note argued that search and cloud revenue growth remained healthy, but the market was increasingly sensitive to depreciation, power costs, and custom silicon investment. Investors were trying to separate strategic spending from uncontrolled expense growth. The stock narrative turned on whether AI capex would defend the core business or dilute near term margins.",
+    "metadata": {"synthetic": true, "topic": "margin pressure"}
+  },
+  {
+    "source_type": "synthetic",
+    "ticker": "META",
+    "title": "Synthetic News: Meta AI Spending Fuels Margin Pressure Narrative",
+    "published_at": "2026-05-17T14:00:00Z",
+    "source_name": "Synthetic Tech Tape",
+    "url": null,
+    "raw_text": "Meta traded lower in a synthetic news item as investors revisited the margin pressure narrative tied to AI spending. The company was described as accelerating datacenter construction, model training investment, and inference capacity. Supporters argued that recommendation quality and advertising tools could improve monetization. Skeptics said the expense trajectory was moving faster than visible revenue contribution, creating uncertainty around operating leverage.",
+    "metadata": {"synthetic": true, "topic": "margin pressure"}
+  },
+  {
+    "source_type": "synthetic",
+    "ticker": "AMD",
+    "title": "Synthetic Sector Brief: Semiconductor Selloff Hits AI Suppliers Despite Demand",
+    "published_at": "2026-05-20T13:30:00Z",
+    "source_name": "Synthetic Semiconductor Tape",
+    "url": null,
+    "raw_text": "A synthetic sector brief described a broad semiconductor selloff even as AI demand indicators remained positive. Investors cited valuation, export restriction headlines, and concerns that hyperscaler capex growth was already priced in. AMD moved lower with peers despite commentary around accelerator opportunities. The narrative shifted from demand scarcity to whether expectations had become too optimistic across the semiconductor complex.",
+    "metadata": {"synthetic": true, "topic": "semiconductor selloff"}
+  },
+  {
+    "source_type": "synthetic",
+    "ticker": "AVGO",
+    "title": "Synthetic Markets Daily: Broadcom Slips In Semiconductor De-Risking Session",
+    "published_at": "2026-05-21T13:35:00Z",
+    "source_name": "Synthetic Semiconductor Tape",
+    "url": null,
+    "raw_text": "Broadcom declined during a synthetic semiconductor de-risking session as investors reduced exposure to AI infrastructure winners. The report said custom silicon demand remained a long term support, but near term trading was dominated by profit taking and macro sensitivity. Networking demand was viewed as resilient. The narrative pressure came from sector-wide multiple compression rather than a single company-specific disappointment.",
+    "metadata": {"synthetic": true, "topic": "semiconductor selloff"}
+  },
+  {
+    "source_type": "synthetic",
+    "ticker": "SMH",
+    "title": "Synthetic ETF Note: Semiconductor Basket Falls On Export And Valuation Concerns",
+    "published_at": "2026-05-22T15:10:00Z",
+    "source_name": "Synthetic ETF Monitor",
+    "url": null,
+    "raw_text": "The synthetic semiconductor basket fell as export concerns combined with valuation worries. Investors said the AI demand thesis was intact, but positioning had become crowded after months of strong returns. The note highlighted weakness in chip designers, equipment suppliers, and memory names. The market narrative became less about one earnings estimate and more about whether the AI trade needed a reset.",
+    "metadata": {"synthetic": true, "topic": "semiconductor selloff"}
+  },
+  {
+    "source_type": "synthetic",
+    "ticker": "TSLA",
+    "title": "Synthetic News: Tesla Delivery Miss Pressures Growth Narrative",
+    "published_at": "2026-05-24T13:30:00Z",
+    "source_name": "Synthetic Auto Ledger",
+    "url": null,
+    "raw_text": "Tesla shares declined after a synthetic delivery miss raised questions about electric vehicle demand and pricing discipline. Investors focused on whether weaker deliveries reflected temporary logistics issues or a deeper demand slowdown. The report said margin pressure could intensify if incentives increased. Bulls pointed to future autonomy and energy storage narratives, but the immediate stock reaction centered on unit volumes.",
+    "metadata": {"synthetic": true, "topic": "TSLA delivery miss"}
+  },
+  {
+    "source_type": "synthetic",
+    "ticker": "TSLA",
+    "title": "Synthetic Analyst Note: Tesla Volume Shortfall Revives Margin Debate",
+    "published_at": "2026-05-25T14:45:00Z",
+    "source_name": "Synthetic Analyst Desk",
+    "url": null,
+    "raw_text": "A synthetic analyst note said Tesla's delivery shortfall revived the debate over automotive gross margins. The note argued that investors would watch inventory, regional mix, and discounting for evidence of demand elasticity. It also said long term optionality from autonomy was not enough to offset near term delivery uncertainty. The dominant narrative was a conflict between growth expectations and pricing pressure.",
+    "metadata": {"synthetic": true, "topic": "TSLA delivery miss"}
+  },
+  {
+    "source_type": "synthetic",
+    "ticker": "TSLA",
+    "title": "Synthetic Brief: Delivery Miss Overshadows Energy Storage Strength",
+    "published_at": "2026-05-26T13:50:00Z",
+    "source_name": "Synthetic Auto Ledger",
+    "url": null,
+    "raw_text": "A synthetic brief said Tesla's delivery miss overshadowed stronger discussion of energy storage deployments. Investors treated the miss as evidence that the core automotive narrative still mattered most for valuation. The report noted that storage margins and software features could help sentiment over time. For the session, however, price action was driven by delivery expectations, inventory concerns, and the risk of additional incentives.",
+    "metadata": {"synthetic": true, "topic": "TSLA delivery miss"}
+  },
+  {
+    "source_type": "synthetic",
+    "ticker": "AAPL",
+    "title": "Synthetic News: Apple China Demand Concerns Return After Channel Checks",
+    "published_at": "2026-05-28T13:30:00Z",
+    "source_name": "Synthetic Consumer Tech Tape",
+    "url": null,
+    "raw_text": "Apple slipped after synthetic channel checks suggested softer iPhone demand in China. Investors focused on promotional activity, local competition, and whether premium smartphone replacement cycles were lengthening. Services revenue was viewed as a stabilizer, but hardware demand remained central to the stock narrative. The report framed China demand as a key variable for near term earnings confidence.",
+    "metadata": {"synthetic": true, "topic": "AAPL China demand", "region": "China"}
+  },
+  {
+    "source_type": "synthetic",
+    "ticker": "AAPL",
+    "title": "Synthetic Analyst Note: China Smartphone Competition Pressures Apple Sentiment",
+    "published_at": "2026-05-29T15:00:00Z",
+    "source_name": "Synthetic Analyst Desk",
+    "url": null,
+    "raw_text": "A synthetic analyst note said Apple sentiment was pressured by renewed concern over China smartphone competition. The note cited local brands, promotion intensity, and uncertainty around upgrade timing. It also emphasized that services and installed base strength limited downside to the broader thesis. The active market narrative was whether China weakness was cyclical noise or a structural challenge to hardware growth.",
+    "metadata": {"synthetic": true, "topic": "AAPL China demand"}
+  },
+  {
+    "source_type": "synthetic",
+    "ticker": "AAPL",
+    "title": "Synthetic Brief: Apple Investors Balance China Demand And AI Device Cycle",
+    "published_at": "2026-05-30T14:10:00Z",
+    "source_name": "Synthetic Consumer Tech Tape",
+    "url": null,
+    "raw_text": "A synthetic brief described Apple investors balancing China demand concerns against hopes for an AI-enabled device cycle. The report said near term iPhone checks remained uneven, while bulls expected software features to support future upgrades. The narrative tension was clear: China weakness affected current estimates, but AI device optimism influenced multiple support. Price action depended on which narrative dominated the session.",
+    "metadata": {"synthetic": true, "topic": "AAPL China demand"}
+  },
+  {
+    "source_type": "synthetic",
+    "ticker": "ORCL",
+    "title": "Synthetic Cloud Brief: Oracle Datacenter Leasing Signals AI Capacity Demand",
+    "published_at": "2026-06-01T13:30:00Z",
+    "source_name": "Synthetic Cloud Ledger",
+    "url": null,
+    "raw_text": "Oracle gained in a synthetic cloud brief after investors highlighted datacenter leasing activity tied to AI workloads. The report said demand for GPU clusters, power availability, and cloud partnerships supported the infrastructure growth narrative. Some investors questioned whether capital intensity would rise before revenue recognition. The session narrative favored AI datacenter demand and supplier ecosystem readthrough.",
+    "metadata": {"synthetic": true, "topic": "AI datacenter demand"}
+  },
+  {
+    "source_type": "synthetic",
+    "ticker": "AMZN",
+    "title": "Synthetic Transcript Excerpt: AWS Capex Discipline Questioned By Investors",
+    "published_at": "2026-06-02T20:30:00Z",
+    "source_name": "Synthetic Transcript Wire",
+    "url": null,
+    "raw_text": "In a synthetic transcript excerpt, Amazon executives were asked how AWS would balance AI capacity investments with margin discipline. The response emphasized customer demand, long lived infrastructure, and careful deployment by region. Investors noted that capex discipline remained a central question. The narrative connected cloud capex to both AI growth optimism and concern about free cash flow timing.",
+    "metadata": {"synthetic": true, "topic": "cloud capex", "format": "transcript_excerpt"}
+  }
+]
