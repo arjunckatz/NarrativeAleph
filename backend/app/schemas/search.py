@@ -24,8 +24,8 @@ class SearchChunk(BaseModel):
 
 
 class SearchResult(BaseModel):
-    score: float
-    snippet: str
+    score: float | None = None
+    snippet: str | None = None
     document: SearchDocument
     chunk: SearchChunk
 
