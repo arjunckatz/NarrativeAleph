@@ -9,38 +9,63 @@ from app.ingestion.chunking import build_bm25_text
 from app.models import Document, DocumentChunk
 from app.schemas.search import SearchChunk, SearchDocument, SearchResponse, SearchResult
 from app.search.query import SearchParams
+from app.search.scoring import LexicalEvidenceScorer
 
 
 class SearchService:
-    def __init__(self, session: Session) -> None:
+    def __init__(self, session: Session, scorer: LexicalEvidenceScorer | None = None) -> None:
         self.session = session
+        self.scorer = scorer or LexicalEvidenceScorer()
 
     def search(self, params: SearchParams) -> SearchResponse:
         query = self._build_query(params)
         rows = self.session.execute(query).all()
+        results = [
+            self._build_result(params=params, document=document, chunk=chunk)
+            for document, chunk in rows
+        ]
+        results.sort(
+            key=lambda result: (
+                -(result.score or 0.0),
+                -result.document.published_at.timestamp(),
+                result.document.id,
+                result.chunk.chunk_index,
+            )
+        )
 
         return SearchResponse(
             query=params.q,
-            results=[
-                SearchResult(
-                    document=SearchDocument(
-                        id=document.id,
-                        ticker=document.ticker,
-                        source_type=document.source_type,
-                        title=document.title,
-                        published_at=document.published_at,
-                        source_name=document.source_name,
-                        url=document.url,
-                        metadata=document.metadata_,
-                    ),
-                    chunk=SearchChunk(
-                        id=chunk.id,
-                        chunk_index=chunk.chunk_index,
-                        metadata=chunk.metadata_,
-                    ),
-                )
-                for document, chunk in rows
-            ],
+            results=results[: params.limit],
+        )
+
+    def _build_result(
+        self,
+        *,
+        params: SearchParams,
+        document: Document,
+        chunk: DocumentChunk,
+    ) -> SearchResult:
+        return SearchResult(
+            score=self.scorer.score(
+                query=params.q,
+                document_title=document.title,
+                chunk_bm25_text=chunk.bm25_text,
+            ),
+            document=SearchDocument(
+                id=document.id,
+                ticker=document.ticker,
+                source_type=document.source_type,
+                title=document.title,
+                published_at=document.published_at,
+                source_name=document.source_name,
+                url=document.url,
+                metadata=document.metadata_,
+            ),
+            chunk=SearchChunk(
+                id=chunk.id,
+                chunk_index=chunk.chunk_index,
+                metadata=chunk.metadata_,
+            ),
         )
 
     def _build_query(self, params: SearchParams) -> Select:
@@ -68,4 +93,4 @@ class SearchService:
             Document.published_at.desc(),
             Document.id.asc(),
             DocumentChunk.chunk_index.asc(),
-        ).limit(params.limit)
+        )

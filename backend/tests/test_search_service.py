@@ -169,7 +169,7 @@ def test_search_returns_empty_results(db_session: Session) -> None:
     assert response.results == []
 
 
-def test_search_results_do_not_include_scoring_or_snippets(db_session: Session) -> None:
+def test_search_results_include_score_but_no_snippet(db_session: Session) -> None:
     add_document(
         db_session,
         ticker="NVDA",
@@ -181,5 +181,6 @@ def test_search_results_do_not_include_scoring_or_snippets(db_session: Session) 
 
     result = SearchService(db_session).search(SearchParams(q="export restrictions")).results[0]
 
-    assert result.score is None
+    assert result.score is not None
+    assert result.score > 0
     assert result.snippet is None
