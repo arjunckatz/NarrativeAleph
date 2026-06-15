@@ -169,7 +169,7 @@ def test_search_returns_empty_results(db_session: Session) -> None:
     assert response.results == []
 
 
-def test_search_results_include_score_but_no_snippet(db_session: Session) -> None:
+def test_search_results_include_score_and_snippet(db_session: Session) -> None:
     add_document(
         db_session,
         ticker="NVDA",
@@ -183,4 +183,4 @@ def test_search_results_include_score_but_no_snippet(db_session: Session) -> Non
 
     assert result.score is not None
     assert result.score > 0
-    assert result.snippet is None
+    assert result.snippet == "export restrictions"

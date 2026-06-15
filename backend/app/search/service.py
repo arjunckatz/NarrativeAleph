@@ -10,6 +10,7 @@ from app.models import Document, DocumentChunk
 from app.schemas.search import SearchChunk, SearchDocument, SearchResponse, SearchResult
 from app.search.query import SearchParams
 from app.search.scoring import LexicalEvidenceScorer
+from app.search.snippets import generate_snippet
 
 
 class SearchService:
@@ -51,6 +52,7 @@ class SearchService:
                 document_title=document.title,
                 chunk_bm25_text=chunk.bm25_text,
             ),
+            snippet=generate_snippet(params.q, chunk.text),
             document=SearchDocument(
                 id=document.id,
                 ticker=document.ticker,
