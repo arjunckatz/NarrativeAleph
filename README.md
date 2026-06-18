@@ -16,8 +16,10 @@ Implemented:
 - Word-safe overlapping document chunking.
 - Basic lexical search service over `DocumentChunk` data.
 - Deterministic lexical scoring and result snippets.
+- Rule-based event extraction over document chunks.
+- Event persistence with service-level duplicate suppression.
 - Minimal React + TypeScript placeholder frontend.
-- Pytest and Ruff coverage for backend infrastructure, ingestion, chunking, hashing, and search.
+- Pytest and Ruff coverage for backend infrastructure, ingestion, chunking, hashing, search, and event extraction.
 
 ## Architecture
 
@@ -32,6 +34,7 @@ Key backend modules:
 - `app/models/`: database entities such as `Document`, `DocumentChunk`, `Event`, `Narrative`, and related score/evidence tables.
 - `app/ingestion/`: local JSON loading, validation, hashing, chunking, and database insertion.
 - `app/search/`: search parameter validation, lexical candidate retrieval, deterministic scoring, and snippet generation.
+- `app/events/`: rule-based market event extraction and persistence.
 - `app/schemas/`: API/response schemas.
 
 ## Backend Setup
@@ -160,6 +163,35 @@ Not yet implemented:
 - Embeddings or vector search.
 - Hybrid retrieval.
 
+## Event Extraction
+
+The current event extraction layer is rule-based and runs over stored `DocumentChunk` rows. It writes accepted matches to the existing `events` table and stores source metadata such as `document_id`, `chunk_id`, matched terms, document title, and source type.
+
+Supported event types:
+
+- `export_restriction`
+- `demand_slowdown`
+- `margin_pressure`
+- `earnings_beat`
+- `earnings_miss`
+- `guidance_cut`
+
+Run extraction after ingesting documents:
+
+```bash
+cd backend
+python -m app.events.cli --ticker NVDA --min-confidence 0.7
+```
+
+Dry-run without writing events:
+
+```bash
+cd backend
+python -m app.events.cli --dry-run
+```
+
+There is no event API yet. Extraction is deterministic, local, and does not use LLMs, embeddings, or vector search.
+
 ## Windows Or No `make` Fallback
 
 If `make` is unavailable, run the underlying commands directly:
@@ -187,7 +219,7 @@ Use `npm` instead of `npm.cmd` on macOS/Linux shells.
 - Real news, filing, transcript, or market data integrations.
 - Embeddings.
 - Vector search.
-- Event extraction.
+- Event API.
 - Narrative ranking.
 - ML models.
 - Trading signals or price prediction.

@@ -38,12 +38,11 @@ class EventExtractionService:
         events_skipped_existing = 0
 
         for chunk, document in chunks:
-            extracted_events = self.extractor.extract(text=chunk.text, title=document.title)
-            accepted_events = [
-                event
-                for event in extracted_events
-                if min_confidence is None or event.confidence >= min_confidence
-            ]
+            accepted_events = self._extract_accepted_events(
+                chunk=chunk,
+                document=document,
+                min_confidence=min_confidence,
+            )
             events_extracted += len(accepted_events)
 
             for extracted_event in accepted_events:
@@ -77,6 +76,18 @@ class EventExtractionService:
             events_skipped_existing=events_skipped_existing,
             dry_run=dry_run,
         )
+
+    def _extract_accepted_events(
+        self,
+        *,
+        chunk: DocumentChunk,
+        document: Document,
+        min_confidence: float | None,
+    ) -> list[ExtractedEvent]:
+        extracted_events = self.extractor.extract(text=chunk.text, title=document.title)
+        if min_confidence is None:
+            return extracted_events
+        return [event for event in extracted_events if event.confidence >= min_confidence]
 
     def _load_chunks(self, *, ticker: str | None) -> list[tuple[DocumentChunk, Document]]:
         statement = (
