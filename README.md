@@ -18,8 +18,9 @@ Implemented:
 - Deterministic lexical scoring and result snippets.
 - Rule-based event extraction over document chunks.
 - Event persistence with service-level duplicate suppression.
+- In-memory narrative aggregation from extracted events.
 - Minimal React + TypeScript placeholder frontend.
-- Pytest and Ruff coverage for backend infrastructure, ingestion, chunking, hashing, search, and event extraction.
+- Pytest and Ruff coverage for backend infrastructure, ingestion, chunking, hashing, search, event extraction, and narrative aggregation.
 
 ## Architecture
 
@@ -35,6 +36,7 @@ Key backend modules:
 - `app/ingestion/`: local JSON loading, validation, hashing, chunking, and database insertion.
 - `app/search/`: search parameter validation, lexical candidate retrieval, deterministic scoring, and snippet generation.
 - `app/events/`: rule-based market event extraction and persistence.
+- `app/narratives/`: in-memory event-to-narrative aggregation.
 - `app/schemas/`: API/response schemas.
 
 ## Backend Setup
@@ -163,6 +165,17 @@ Not yet implemented:
 - Embeddings or vector search.
 - Hybrid retrieval.
 
+## Current Pipeline
+
+Current local flow:
+
+```text
+documents -> chunks -> lexical search
+documents -> chunks -> extracted events -> narrative candidates
+```
+
+Narrative aggregation currently groups persisted or event-like rows in memory. It does not write to `narratives` or `narrative_scores` yet.
+
 ## Event Extraction
 
 The current event extraction layer is rule-based and runs over stored `DocumentChunk` rows. It writes accepted matches to the existing `events` table and stores source metadata such as `document_id`, `chunk_id`, matched terms, document title, and source type.
@@ -188,6 +201,12 @@ Dry-run without writing events:
 ```bash
 cd backend
 python -m app.events.cli --dry-run
+```
+
+Equivalent Makefile helper:
+
+```bash
+make extract-events ARGS="--ticker NVDA --min-confidence 0.7"
 ```
 
 There is no event API yet. Extraction is deterministic, local, and does not use LLMs, embeddings, or vector search.
@@ -220,7 +239,7 @@ Use `npm` instead of `npm.cmd` on macOS/Linux shells.
 - Embeddings.
 - Vector search.
 - Event API.
-- Narrative ranking.
+- Narrative persistence, ranking, or generation.
 - ML models.
 - Trading signals or price prediction.
 - Frontend product workflows.

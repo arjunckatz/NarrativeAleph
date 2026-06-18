@@ -1,4 +1,4 @@
-.PHONY: setup setup-backend setup-frontend db-up db-down migrate revision ingest-sample test-backend lint format frontend-dev frontend-build test
+.PHONY: setup setup-backend setup-frontend db-up db-down migrate revision ingest-sample extract-events test-backend lint format frontend-dev frontend-build test
 
 PYTHON ?= python
 PIP ?= $(PYTHON) -m pip
@@ -25,6 +25,9 @@ revision:
 
 ingest-sample:
 	cd backend && $(PYTHON) -m app.ingestion.cli ../data/sample_documents.json
+
+extract-events:
+	cd backend && $(PYTHON) -m app.events.cli $(ARGS)
 
 test-backend:
 	$(PYTHON) -m pytest
