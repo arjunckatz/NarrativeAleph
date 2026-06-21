@@ -106,3 +106,90 @@ def test_narratives_successful_response_shape(
             "supporting_event_ids": [event_row.id],
         }
     ]
+
+
+def test_narratives_ticker_filter(narratives_client: tuple[TestClient, Session]) -> None:
+    client, session = narratives_client
+    add_event(session, ticker="NVDA", event_type="margin_pressure")
+    add_event(session, ticker="AAPL", event_type="margin_pressure")
+
+    response = client.get("/api/narratives", params={"ticker": "nvda"})
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert len(payload) == 1
+    assert payload[0]["ticker"] == "NVDA"
+
+
+def test_narratives_start_date_filter(narratives_client: tuple[TestClient, Session]) -> None:
+    client, session = narratives_client
+    add_event(session, event_type="guidance_cut", event_date=date(2026, 5, 31))
+    add_event(session, event_type="guidance_cut", event_date=date(2026, 6, 2))
+
+    response = client.get("/api/narratives", params={"start_date": "2026-06-01"})
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload[0]["event_count"] == 1
+    assert payload[0]["first_seen"] == "2026-06-02"
+
+
+def test_narratives_end_date_filter(narratives_client: tuple[TestClient, Session]) -> None:
+    client, session = narratives_client
+    add_event(session, event_type="demand_slowdown", event_date=date(2026, 6, 2))
+    add_event(session, event_type="demand_slowdown", event_date=date(2026, 6, 7))
+
+    response = client.get("/api/narratives", params={"end_date": "2026-06-05"})
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload[0]["event_count"] == 1
+    assert payload[0]["last_seen"] == "2026-06-02"
+
+
+def test_narratives_invalid_date_range_returns_validation_error(
+    narratives_client: tuple[TestClient, Session],
+) -> None:
+    client, _session = narratives_client
+
+    response = client.get(
+        "/api/narratives",
+        params={"start_date": "2026-06-30", "end_date": "2026-06-01"},
+    )
+
+    assert response.status_code == 422
+
+
+def test_narratives_response_includes_confidence_rollups(
+    narratives_client: tuple[TestClient, Session],
+) -> None:
+    client, session = narratives_client
+    add_event(session, event_type="earnings_beat", confidence=Decimal("0.70"))
+    add_event(session, event_type="earnings_beat", confidence=Decimal("0.90"))
+
+    response = client.get("/api/narratives")
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload[0]["average_confidence"] == 0.8
+    assert payload[0]["max_confidence"] == 0.9
+    assert payload[0]["event_count"] == 2
+
+
+def test_narratives_multiple_results_have_deterministic_order(
+    narratives_client: tuple[TestClient, Session],
+) -> None:
+    client, session = narratives_client
+    add_event(session, ticker="TSLA", event_type="guidance_cut")
+    add_event(session, ticker="AAPL", event_type="earnings_miss")
+    add_event(session, ticker="NVDA", event_type="export_restriction")
+
+    response = client.get("/api/narratives")
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert [(item["ticker"], item["narrative_name"]) for item in payload] == [
+        ("AAPL", "Earnings Weakness"),
+        ("NVDA", "Export Restrictions"),
+        ("TSLA", "Guidance Concerns"),
+    ]

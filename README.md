@@ -65,6 +65,7 @@ Current HTTP endpoints:
 - `GET /health`
 - `GET /api/version`
 - `GET /api/search`
+- `GET /api/narratives`
 
 ## Frontend Setup
 
@@ -175,6 +176,8 @@ documents -> chunks -> extracted events -> narrative candidates
 ```
 
 Narrative aggregation currently groups persisted `Event` rows or event-like objects in memory. It does not write to `narratives` or `narrative_scores` yet.
+
+Example narrative API call: `GET /api/narratives?ticker=NVDA&start_date=2026-06-01`.
 
 ## Event Extraction
 

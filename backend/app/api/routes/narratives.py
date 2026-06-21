@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from datetime import date
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.db.session import get_db
@@ -20,8 +20,14 @@ def list_narratives(
     end_date: date | None = None,
     db: Session = DBSession,
 ) -> list[NarrativeCandidateResponse]:
+    if start_date and end_date and start_date > end_date:
+        raise HTTPException(
+            status_code=422,
+            detail="start_date must be before or equal to end_date",
+        )
+
     return NarrativeAggregationService(db).aggregate(
-        ticker=ticker,
+        ticker=ticker.upper() if ticker else None,
         start_date=start_date,
         end_date=end_date,
     )
