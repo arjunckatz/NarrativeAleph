@@ -39,6 +39,30 @@ Key backend modules:
 - `app/narratives/`: in-memory event-to-narrative aggregation.
 - `app/schemas/`: API/response schemas.
 
+## Demo Quickstart
+
+With Python 3.11+, Node.js, Docker, and Make installed:
+
+```bash
+cp .env.example .env
+make setup
+make db-up
+make migrate
+make ingest-sample
+make extract-events
+uvicorn app.main:app --reload --app-dir backend
+```
+
+Then query the running API:
+
+```bash
+curl "http://127.0.0.1:8000/api/search?q=export%20restrictions&ticker=NVDA&limit=5"
+curl "http://127.0.0.1:8000/api/narratives?ticker=NVDA"
+```
+
+The sample corpus is synthetic. Repeating ingestion or event extraction skips rows already
+persisted, so the demo commands are safe to rerun.
+
 ## Backend Setup
 
 Create and activate a Python 3.11+ virtual environment, then install backend dependencies:
@@ -227,6 +251,8 @@ docker compose up -d postgres
 cd backend
 python -m alembic upgrade head
 python -m app.ingestion.cli ../data/sample_documents.json
+python -m app.events.cli
+python -m uvicorn app.main:app --reload
 cd ..
 python -m ruff check .
 python -m pytest
