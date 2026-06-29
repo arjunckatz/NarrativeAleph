@@ -49,6 +49,7 @@ def add_event(
     event_type: str = "export_restriction",
     event_date: date = date(2026, 6, 1),
     confidence: Decimal = Decimal("0.80"),
+    metadata: dict | None = None,
 ) -> Event:
     event_row = Event(
         ticker=ticker,
@@ -57,7 +58,7 @@ def add_event(
         extracted_text=f"{ticker} {event_type}",
         sentiment="negative",
         confidence=confidence,
-        metadata_={"test": True},
+        metadata_=metadata if metadata is not None else {"test": True},
     )
     session.add(event_row)
     session.commit()
@@ -87,7 +88,15 @@ def test_narratives_successful_response_shape(
     narratives_client: tuple[TestClient, Session],
 ) -> None:
     client, session = narratives_client
-    event_row = add_event(session)
+    event_row = add_event(
+        session,
+        metadata={
+            "document_id": 11,
+            "chunk_id": 22,
+            "document_title": "NVDA export restriction report",
+            "source_type": "news",
+        },
+    )
 
     response = client.get("/api/narratives")
 
@@ -111,6 +120,18 @@ def test_narratives_successful_response_shape(
                 "recency_score": 20.0,
                 "event_type_diversity_score": 0.0,
             },
+            "supporting_evidence": [
+                {
+                    "event_id": event_row.id,
+                    "event_type": "export_restriction",
+                    "confidence": 0.8,
+                    "extracted_text": "NVDA export_restriction",
+                    "document_id": 11,
+                    "chunk_id": 22,
+                    "document_title": "NVDA export restriction report",
+                    "source_type": "news",
+                }
+            ],
         }
     ]
 
@@ -126,6 +147,7 @@ def test_narratives_ticker_filter(narratives_client: tuple[TestClient, Session])
     payload = response.json()
     assert len(payload) == 1
     assert payload[0]["ticker"] == "NVDA"
+    assert payload[0]["supporting_evidence"][0]["event_type"] == "margin_pressure"
 
 
 def test_narratives_start_date_filter(narratives_client: tuple[TestClient, Session]) -> None:
@@ -152,6 +174,40 @@ def test_narratives_end_date_filter(narratives_client: tuple[TestClient, Session
     payload = response.json()
     assert payload[0]["event_count"] == 1
     assert payload[0]["last_seen"] == "2026-06-02"
+    assert payload[0]["supporting_evidence"][0]["extracted_text"] == (
+        "NVDA demand_slowdown"
+    )
+
+
+def test_narratives_supporting_evidence_ordering_is_deterministic(
+    narratives_client: tuple[TestClient, Session],
+) -> None:
+    client, session = narratives_client
+    first_event = add_event(session, event_date=date(2026, 6, 1))
+    second_event = add_event(session, event_date=date(2026, 6, 2))
+
+    response = client.get("/api/narratives")
+
+    assert response.status_code == 200
+    evidence = response.json()[0]["supporting_evidence"]
+    assert [item["event_id"] for item in evidence] == [first_event.id, second_event.id]
+
+
+def test_narratives_events_without_metadata_return_safe_evidence(
+    narratives_client: tuple[TestClient, Session],
+) -> None:
+    client, session = narratives_client
+    event_row = add_event(session, metadata={})
+
+    response = client.get("/api/narratives")
+
+    assert response.status_code == 200
+    evidence = response.json()[0]["supporting_evidence"][0]
+    assert evidence["event_id"] == event_row.id
+    assert evidence["document_id"] is None
+    assert evidence["chunk_id"] is None
+    assert evidence["document_title"] is None
+    assert evidence["source_type"] is None
 
 
 def test_narratives_invalid_date_range_returns_validation_error(

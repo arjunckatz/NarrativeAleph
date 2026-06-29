@@ -7,7 +7,11 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.models import Event
-from app.narratives.aggregator import NarrativeAggregator, NarrativeCandidate
+from app.narratives.aggregator import (
+    NarrativeAggregator,
+    NarrativeCandidate,
+    SupportingEvidence,
+)
 from app.narratives.scoring import NarrativeScorer
 
 
@@ -41,6 +45,7 @@ class NarrativeAggregationService:
         range_start = start_date or min(candidate.first_seen for candidate in candidates)
         range_end = end_date or max(candidate.last_seen for candidate in candidates)
         scored_candidates = []
+        events_by_id = {event.id: event for event in events}
         for candidate in candidates:
             score_result = self.scorer.score(
                 candidate,
@@ -52,6 +57,10 @@ class NarrativeAggregationService:
                     candidate,
                     score=score_result.score,
                     score_components=score_result.components,
+                    supporting_evidence=self._supporting_evidence(
+                        candidate,
+                        events_by_id,
+                    ),
                 )
             )
 
@@ -65,6 +74,32 @@ class NarrativeAggregationService:
                 candidate.ticker,
             ),
         )
+
+    def _supporting_evidence(
+        self,
+        candidate: NarrativeCandidate,
+        events_by_id: dict[int, Event],
+    ) -> tuple[SupportingEvidence, ...]:
+        evidence = []
+        for event_id in candidate.supporting_event_ids:
+            event = events_by_id.get(event_id)
+            if event is None:
+                continue
+
+            metadata = event.metadata_ or {}
+            evidence.append(
+                SupportingEvidence(
+                    event_id=event.id,
+                    event_type=event.event_type,
+                    confidence=round(float(event.confidence), 4),
+                    extracted_text=event.extracted_text,
+                    document_id=metadata.get("document_id"),
+                    chunk_id=metadata.get("chunk_id"),
+                    document_title=metadata.get("document_title"),
+                    source_type=metadata.get("source_type"),
+                )
+            )
+        return tuple(evidence)
 
     def _load_events(
         self,

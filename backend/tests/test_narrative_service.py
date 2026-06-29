@@ -29,6 +29,7 @@ def add_event(
     event_type: str = "export_restriction",
     event_date: date = date(2026, 6, 1),
     confidence: Decimal = Decimal("0.80"),
+    metadata: dict | None = None,
 ) -> Event:
     event_row = Event(
         ticker=ticker,
@@ -37,7 +38,7 @@ def add_event(
         extracted_text=f"{ticker} {event_type} event",
         sentiment="negative",
         confidence=confidence,
-        metadata_={"test": True},
+        metadata_=metadata if metadata is not None else {"test": True},
     )
     session.add(event_row)
     session.commit()
@@ -66,6 +67,8 @@ def test_service_reads_event_rows_and_returns_narrative_candidates(db_session: S
         "recency_score": 20.0,
         "event_type_diversity_score": 0.0,
     }
+    assert candidates[0].supporting_evidence[0].event_id == event_row.id
+    assert candidates[0].supporting_evidence[0].event_type == "export_restriction"
 
 
 def test_ticker_filter_works(db_session: Session) -> None:
@@ -92,6 +95,58 @@ def test_date_filters_work(db_session: Session) -> None:
     assert candidates[0].event_count == 1
     assert candidates[0].first_seen == date(2026, 6, 2)
     assert candidates[0].last_seen == date(2026, 6, 2)
+
+
+def test_supporting_evidence_includes_metadata_fields(db_session: Session) -> None:
+    event_row = add_event(
+        db_session,
+        metadata={
+            "document_id": 101,
+            "chunk_id": 202,
+            "chunk_index": 3,
+            "document_title": "NVDA export controls update",
+            "source_type": "news",
+        },
+    )
+
+    candidates = NarrativeAggregationService(db_session).aggregate()
+
+    evidence = candidates[0].supporting_evidence[0]
+    assert evidence.event_id == event_row.id
+    assert evidence.event_type == "export_restriction"
+    assert evidence.confidence == 0.8
+    assert evidence.extracted_text == "NVDA export_restriction event"
+    assert evidence.document_id == 101
+    assert evidence.chunk_id == 202
+    assert evidence.document_title == "NVDA export controls update"
+    assert evidence.source_type == "news"
+
+
+def test_supporting_evidence_ordering_is_deterministic(db_session: Session) -> None:
+    first_event = add_event(db_session, event_date=date(2026, 6, 1))
+    second_event = add_event(db_session, event_date=date(2026, 6, 2))
+
+    first = NarrativeAggregationService(db_session).aggregate()
+    second = NarrativeAggregationService(db_session).aggregate()
+
+    assert [item.event_id for item in first[0].supporting_evidence] == [
+        first_event.id,
+        second_event.id,
+    ]
+    assert first == second
+
+
+def test_events_without_metadata_return_safe_evidence(db_session: Session) -> None:
+    event_row = add_event(db_session, metadata={})
+
+    candidates = NarrativeAggregationService(db_session).aggregate()
+
+    evidence = candidates[0].supporting_evidence[0]
+    assert evidence.event_id == event_row.id
+    assert evidence.document_id is None
+    assert evidence.chunk_id is None
+    assert evidence.document_title is None
+    assert evidence.source_type is None
 
 
 def test_multiple_event_types_aggregate_correctly(db_session: Session) -> None:
