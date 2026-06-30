@@ -1,6 +1,6 @@
-# Narrative Alpha
+# Narrative Aleph
 
-Narrative Alpha is a financial narrative intelligence engine. It ingests market-style text, stores evidence-bearing document chunks, and retrieves relevant passages that can later support market narrative extraction and explanation.
+Narrative Aleph is a financial narrative intelligence engine. It ingests market-style text, stores evidence-bearing document chunks, and retrieves relevant passages that can later support market narrative extraction and explanation.
 
 It is not a trading bot, stock price predictor, or generic finance dashboard.
 
