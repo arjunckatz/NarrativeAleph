@@ -34,6 +34,23 @@ def test_score_is_deterministic() -> None:
     assert score(candidate) == score(candidate)
 
 
+def test_score_components_are_demo_readable() -> None:
+    result = NarrativeScorer().score(
+        make_candidate(
+            event_count=3,
+            average_confidence=0.8333,
+            max_confidence=0.95,
+            first_seen=date(2026, 5, 1),
+            last_seen=date(2026, 5, 6),
+        ),
+        range_start=date(2026, 5, 1),
+        range_end=date(2026, 5, 6),
+    )
+
+    assert result.score == 73.67
+    assert result.components["confidence_score"] == 35.67
+
+
 def test_higher_confidence_increases_score() -> None:
     lower = score(make_candidate(average_confidence=0.6, max_confidence=0.7))
     higher = score(make_candidate(average_confidence=0.8, max_confidence=0.9))

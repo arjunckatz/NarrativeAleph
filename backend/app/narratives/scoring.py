@@ -13,6 +13,7 @@ class NarrativeScoreResult:
 
 
 class NarrativeScorer:
+    SCORE_DECIMAL_PLACES = 2
     EVENT_COUNT_WEIGHT = 30.0
     CONFIDENCE_WEIGHT = 40.0
     RECENCY_WEIGHT = 20.0
@@ -52,15 +53,20 @@ class NarrativeScorer:
         )
 
         components = {
-            "event_count_score": round(event_count_score, 4),
-            "confidence_score": round(confidence_score, 4),
-            "recency_score": round(recency_score, 4),
-            "event_type_diversity_score": round(event_type_diversity_score, 4),
+            "event_count_score": self._round_score(event_count_score),
+            "confidence_score": self._round_score(confidence_score),
+            "recency_score": self._round_score(recency_score),
+            "event_type_diversity_score": self._round_score(
+                event_type_diversity_score
+            ),
         }
         return NarrativeScoreResult(
-            score=round(sum(components.values()), 4),
+            score=self._round_score(sum(components.values())),
             components=components,
         )
+
+    def _round_score(self, value: float) -> float:
+        return round(value, self.SCORE_DECIMAL_PLACES)
 
     @staticmethod
     def _recency_ratio(*, last_seen: date, range_start: date, range_end: date) -> float:
