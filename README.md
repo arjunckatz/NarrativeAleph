@@ -1,45 +1,57 @@
 # Narrative Aleph
 
-Narrative Aleph is a financial narrative intelligence engine. It ingests market-style text, stores evidence-bearing document chunks, and retrieves relevant passages that can later support market narrative extraction and explanation.
+Narrative Aleph is a financial narrative intelligence engine. Given local market-style documents, it ingests and chunks text, retrieves lexical evidence, extracts deterministic market events, aggregates those events into scored narratives, and returns an evidence-backed explanation.
 
 It is not a trading bot, stock price predictor, or generic finance dashboard.
 
 ## Current Status
 
-Implemented:
+The project currently supports a local demo flow:
 
-- FastAPI backend with `GET /health` and `GET /api/version`.
-- SQLAlchemy 2.x data model with Alembic migrations.
-- Postgres local development via Docker Compose.
-- Local JSON document ingestion from `data/sample_documents.json`.
-- Deterministic document hashing and idempotent ingestion.
-- Word-safe overlapping document chunking.
-- Basic lexical search service over `DocumentChunk` data.
-- Deterministic lexical scoring and result snippets.
-- Rule-based event extraction over document chunks.
-- Event persistence with service-level duplicate suppression.
-- In-memory narrative aggregation from extracted events.
+- Local synthetic corpus in `data/sample_documents.json`.
+- Deterministic document hashing, deduplication, and word-safe chunking.
+- Lexical search over stored `DocumentChunk` rows with scoring and snippets.
+- Rule-based event extraction over chunks, persisted to the `events` table.
+- Narrative aggregation and deterministic scoring from stored events.
+- Evidence-backed `/api/explain` endpoint built from narrative candidates.
 - Minimal React + TypeScript placeholder frontend.
-- Pytest and Ruff coverage for backend infrastructure, ingestion, chunking, hashing, search, event extraction, and narrative aggregation.
+
+No real market/news APIs, embeddings, LLMs, ML ranking, or frontend workflows are implemented yet.
 
 ## Architecture
 
-- `backend/`: FastAPI application, SQLAlchemy models, Alembic migrations, ingestion utilities, and search modules.
+- `backend/`: FastAPI app, SQLAlchemy models, Alembic migrations, ingestion, search, event extraction, narratives, and explain services.
 - `frontend/`: Vite React + TypeScript placeholder app.
-- `data/`: local synthetic sample documents for ingestion and search development.
+- `data/`: clearly synthetic finance documents for local development.
 - `docker-compose.yml`: local Postgres service.
-- `Makefile`: common setup, migration, ingestion, test, lint, and frontend commands.
+- `Makefile`: common setup, migration, ingestion, extraction, lint, test, and build commands.
 
 Key backend modules:
 
-- `app/models/`: database entities such as `Document`, `DocumentChunk`, `Event`, `Narrative`, and related score/evidence tables.
-- `app/ingestion/`: local JSON loading, validation, hashing, chunking, and database insertion.
-- `app/search/`: search parameter validation, lexical candidate retrieval, deterministic scoring, and snippet generation.
-- `app/events/`: rule-based market event extraction and persistence.
-- `app/narratives/`: in-memory event-to-narrative aggregation.
-- `app/schemas/`: API/response schemas.
+- `app/ingestion/`: JSON validation, hashing, chunking, and idempotent insertion.
+- `app/search/`: lexical retrieval, deterministic scoring, and snippets.
+- `app/events/`: rule-based event extraction, persistence service, and CLI.
+- `app/narratives/`: event-to-narrative mapping, aggregation, scoring, and supporting evidence.
+- `app/explain/`: deterministic explanation summary over top scored narratives.
 
-## Demo Quickstart
+## Backend Pipeline
+
+```text
+sample JSON documents
+  -> validated Document rows
+  -> overlapping DocumentChunk rows
+  -> lexical search evidence
+
+DocumentChunk rows
+  -> deterministic event extraction
+  -> persisted Event rows
+  -> narrative aggregation/scoring
+  -> evidence-backed explain response
+```
+
+The current narrative/explain layer is read-only over stored `Event` rows. It does not write to `narratives`, `narrative_scores`, or `narrative_evidence`.
+
+## Quickstart
 
 With Python 3.11+, Node.js, Docker, and Make installed:
 
@@ -61,28 +73,35 @@ curl "http://127.0.0.1:8000/api/narratives?ticker=NVDA"
 curl "http://127.0.0.1:8000/api/explain?ticker=NVDA&limit=3"
 ```
 
-The sample corpus is synthetic. Repeating ingestion or event extraction skips rows already
-persisted, so the demo commands are safe to rerun.
+The sample corpus is synthetic. Repeating ingestion or event extraction skips rows already persisted, so the demo commands are safe to rerun.
 
-## Backend Setup
+## Demo Workflow
 
-Create and activate a Python 3.11+ virtual environment, then install backend dependencies:
+1. Start Postgres: `make db-up`
+2. Apply migrations: `make migrate`
+3. Ingest sample documents: `make ingest-sample`
+4. Extract events: `make extract-events`
+5. Start the API: `uvicorn app.main:app --reload --app-dir backend`
+6. Inspect search, narratives, and explain responses with the example URLs below.
 
-```bash
-make setup-backend
+## API Examples
+
+Search lexical evidence:
+
+```text
+GET /api/search?q=export%20restrictions&ticker=NVDA&limit=5
 ```
 
-Run backend checks:
+Get scored narrative candidates:
 
-```bash
-make lint
-make test-backend
+```text
+GET /api/narratives?ticker=NVDA&start_date=2026-06-01
 ```
 
-Run the API locally:
+Get a deterministic explanation summary:
 
-```bash
-uvicorn app.main:app --reload --app-dir backend
+```text
+GET /api/explain?ticker=NVDA&limit=3
 ```
 
 Current HTTP endpoints:
@@ -93,82 +112,9 @@ Current HTTP endpoints:
 - `GET /api/narratives`
 - `GET /api/explain`
 
-## Frontend Setup
+## Search
 
-Install frontend dependencies:
-
-```bash
-make setup-frontend
-```
-
-Run the placeholder frontend:
-
-```bash
-make frontend-dev
-```
-
-Build the frontend:
-
-```bash
-make frontend-build
-```
-
-The frontend is intentionally minimal and does not yet expose ingestion, search, ranking, or narrative workflows.
-
-## Database And Migrations
-
-Copy `.env.example` to `.env` and adjust values if needed.
-
-Start Postgres:
-
-```bash
-make db-up
-```
-
-Run migrations:
-
-```bash
-make migrate
-```
-
-Stop local services:
-
-```bash
-make db-down
-```
-
-Documents include a deterministic `content_hash` and a uniqueness constraint on source type, ticker, source name, and hash to prevent duplicate ingestion. A Postgres-only partial unique index on non-null document URLs is intentionally deferred until URL canonicalization rules are clear.
-
-## Sample Ingestion
-
-The sample corpus lives at `data/sample_documents.json`. It contains clearly synthetic finance documents around NVDA export restrictions, AI datacenter demand, margin pressure, semiconductor selloff, cloud capex, TSLA delivery misses, and AAPL China demand.
-
-Run sample ingestion after Postgres is running and migrations have been applied:
-
-```bash
-make ingest-sample
-```
-
-Equivalent direct command:
-
-```bash
-cd backend
-python -m app.ingestion.cli ../data/sample_documents.json
-```
-
-Ingestion validates the full file before writing anything. Missing required fields, invalid `source_type`, invalid `published_at`, or empty `raw_text` stop the run without partial ingestion.
-
-## Search API
-
-The current search implementation is lexical-only over ingested `DocumentChunk` rows.
-
-Example:
-
-```text
-GET /api/search?q=export%20restrictions&ticker=NVDA&limit=5
-```
-
-Supported query parameters:
+Search is lexical-only over ingested `DocumentChunk` rows. It supports:
 
 - `q`
 - `ticker`
@@ -177,39 +123,11 @@ Supported query parameters:
 - `end_date`
 - `limit`
 
-The endpoint returns matching document chunks with document metadata, chunk metadata, deterministic lexical scores, and text snippets.
-
-Search currently supports:
-
-- Query validation for query, ticker, source type, date range, and limit.
-- Candidate retrieval from `DocumentChunk` joined with `Document`.
-- Deterministic lexical scoring based on phrase match, title term matches, term frequency, and unique query terms matched.
-- Snippet generation from chunk text.
-
-Not yet implemented:
-
-- Frontend search UI.
-- Embeddings or vector search.
-- Hybrid retrieval.
-
-## Current Pipeline
-
-Current local flow:
-
-```text
-documents -> chunks -> lexical search
-documents -> chunks -> extracted events -> narrative candidates
-```
-
-Narrative aggregation currently groups persisted `Event` rows or event-like objects in memory and returns scored candidates with lightweight supporting event evidence. It does not write to `narratives`, `narrative_scores`, or `narrative_evidence` yet.
-
-Example narrative API call: `GET /api/narratives?ticker=NVDA&start_date=2026-06-01`.
-
-Example deterministic explain API call: `GET /api/explain?ticker=NVDA&limit=3`.
+Results include document metadata, chunk metadata, deterministic lexical score, and a text snippet. Embeddings, vector search, and hybrid retrieval are intentionally deferred.
 
 ## Event Extraction
 
-The current event extraction layer is rule-based and runs over stored `DocumentChunk` rows. It writes accepted matches to the existing `events` table and stores source metadata such as `document_id`, `chunk_id`, matched terms, document title, and source type.
+Event extraction is deterministic and rule-based. It runs over stored chunks and writes accepted matches to the existing `events` table with source metadata such as `document_id`, `chunk_id`, document title, source type, and matched terms.
 
 Supported event types:
 
@@ -223,8 +141,7 @@ Supported event types:
 Run extraction after ingesting documents:
 
 ```bash
-cd backend
-python -m app.events.cli --ticker NVDA --min-confidence 0.7
+make extract-events ARGS="--ticker NVDA --min-confidence 0.7"
 ```
 
 Dry-run without writing events:
@@ -234,13 +151,39 @@ cd backend
 python -m app.events.cli --dry-run
 ```
 
-Equivalent Makefile helper:
+There is no event API yet.
+
+## Setup Details
+
+Install backend dependencies:
 
 ```bash
-make extract-events ARGS="--ticker NVDA --min-confidence 0.7"
+make setup-backend
 ```
 
-There is no event API yet. Extraction is deterministic, local, and does not use LLMs, embeddings, or vector search.
+Install frontend dependencies:
+
+```bash
+make setup-frontend
+```
+
+Run checks:
+
+```bash
+make lint
+make test-backend
+make frontend-build
+```
+
+Database commands:
+
+```bash
+make db-up
+make migrate
+make db-down
+```
+
+The frontend is intentionally minimal and does not expose ingestion, search, narrative, or explain workflows yet.
 
 ## Windows Or No `make` Fallback
 
@@ -269,10 +212,11 @@ Use `npm` instead of `npm.cmd` on macOS/Linux shells.
 ## Intentionally Not Built Yet
 
 - Real news, filing, transcript, or market data integrations.
-- Embeddings.
-- Vector search.
+- Embeddings or vector search.
+- LLM-generated explanations.
+- ML ranking models.
+- Price movement integration.
 - Event API.
-- Narrative persistence, ranking, or generation.
-- ML models.
+- Narrative persistence to `NarrativeScore` or `NarrativeEvidence`.
 - Trading signals or price prediction.
 - Frontend product workflows.
