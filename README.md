@@ -58,6 +58,7 @@ Then query the running API:
 ```bash
 curl "http://127.0.0.1:8000/api/search?q=export%20restrictions&ticker=NVDA&limit=5"
 curl "http://127.0.0.1:8000/api/narratives?ticker=NVDA"
+curl "http://127.0.0.1:8000/api/explain?ticker=NVDA&limit=3"
 ```
 
 The sample corpus is synthetic. Repeating ingestion or event extraction skips rows already
@@ -90,6 +91,7 @@ Current HTTP endpoints:
 - `GET /api/version`
 - `GET /api/search`
 - `GET /api/narratives`
+- `GET /api/explain`
 
 ## Frontend Setup
 
@@ -202,6 +204,8 @@ documents -> chunks -> extracted events -> narrative candidates
 Narrative aggregation currently groups persisted `Event` rows or event-like objects in memory and returns scored candidates with lightweight supporting event evidence. It does not write to `narratives`, `narrative_scores`, or `narrative_evidence` yet.
 
 Example narrative API call: `GET /api/narratives?ticker=NVDA&start_date=2026-06-01`.
+
+Example deterministic explain API call: `GET /api/explain?ticker=NVDA&limit=3`.
 
 ## Event Extraction
 
